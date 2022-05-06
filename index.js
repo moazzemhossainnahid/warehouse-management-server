@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config();
 const app = express();
@@ -22,6 +23,14 @@ const run = async() => {
     try{
         await client.connect();
         const vegetablesCollection = client.db("VegetablesPlanet").collection("Vegetables");
+
+        // Auth
+        app.post('/login', async(req,res) => {   
+            const user= req.body;
+            const accessToken = jwy.sign(user, process.env.ACCESS_TOKEN_SECRET, {expiresIn: '1d'});
+            res.send(accessToken);
+
+        })
 
         // Get Inventories
         app.get('/inventories', async(req, res) => {
@@ -67,6 +76,21 @@ const run = async() => {
             res.send(result);
         })
 
+        // update quantity
+        app.put('/updatequantity/:id', async(req, res) => {
+
+            const id = req.params.id;
+            const quantity = req.body.newQuantity;
+            console.log(quantity);
+            const query = {_id: ObjectId(id)};
+            const options = {upsert:true};
+            const updatedDoc = {
+                $set : {quantity}
+            };
+            const result = await vegetablesCollection.updateOne(query, updatedDoc, options);
+            res.send(result);
+        })
+
         // delete inventory
         app.delete('/inventory/:id', async(req, res) => {
             const id = req.params.id;
@@ -74,6 +98,7 @@ const run = async() => {
             const result = await vegetablesCollection.deleteOne(query);
             res.send(result);
         })
+        
 
     }finally{
 
