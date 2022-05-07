@@ -10,13 +10,6 @@ const port = process.env.PORT || 5000;
 app.use(express.json());
 app.use(cors());
 
-
-
-// DB_USER=VegetablesPlanet
-// DB_PASS=mJnZRjGeebGXU63n
-
-
-
 // Get JWT Token
 
 const verifyToken = (req, res, next) => {
