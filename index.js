@@ -81,11 +81,11 @@ const run = async() => {
 
             const id = req.params.id;
             const quantity = req.body.newQuantity;
-            console.log(quantity);
+            const sold = req.body.newSold;
             const query = {_id: ObjectId(id)};
             const options = {upsert:true};
             const updatedDoc = {
-                $set : {quantity}
+                $set : {quantity, sold}
             };
             const result = await vegetablesCollection.updateOne(query, updatedDoc, options);
             res.send(result);
